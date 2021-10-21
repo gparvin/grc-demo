@@ -1,0 +1,12 @@
+[
+    {
+        "op": "replace",
+        "path": "/metadata/name",
+        "value": "##NAME##-chan"
+    },
+    {
+        "op": "replace",
+        "path": "/spec/pathname",
+        "value": "##GH_URL##"
+    }
+]
