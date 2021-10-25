@@ -3,10 +3,10 @@ kind: Policy
 metadata:
   name: policy-label-cluster
   annotations:
-spec:
     policy.open-cluster-management.io/standards: NIST-CSF
     policy.open-cluster-management.io/categories: CM Configuration Management
     policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
   remediationAction: enforce
   disabled: false
   policy-templates:
