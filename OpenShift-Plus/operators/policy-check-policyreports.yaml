@@ -35,21 +35,6 @@ spec:
                 kind: PolicyReport
                 results:
                   - result: fail
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: policy-check-cluster-policyreports
-        spec:
-          remediationAction: inform
-          severity: low
-          object-templates:
-            - complianceType: mustnothave
-              objectDefinition:
-                apiVersion: wgpolicyk8s.io/v1alpha2
-                kind: ClusterPolicyReport
-                results:
-                  - result: fail
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding

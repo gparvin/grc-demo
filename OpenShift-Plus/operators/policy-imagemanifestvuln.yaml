@@ -41,7 +41,7 @@ spec:
           remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
           severity: high
           namespaceSelector:
-            exclude: ["kube-*","openshift*"]
+            exclude: ["kube-*","open*","hive"]
             include: ["*"]
           object-templates:
             - complianceType: mustnothave # mustnothave any ImageManifestVuln object
