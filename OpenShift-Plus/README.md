@@ -18,23 +18,32 @@ Governance using OpenShift Plus takes advantage of the strengths found in severa
 Red Hat Advanced Cluster Management for Kubernetes helps with cluster management, application management and also contains a policy framework that helps with configuration and governance.
 
 ---
-<div style="align:center"><img alt="Click the link for the central route" src="images/acm-policy-arch.png" width="60%"></div>
+<div style="align:center"><img alt="Click the link for the central route" src="images/acm-policy-arch.png" width="70%"></div>
 ---
 
 OpenShift’s Compliance Operator helps you apply compliance rules to your clusters.  And using the Compliance Operator with ACM and ACS simplifies the process when handling this for many clusters.
 
 ---
-<div style="align:center"><img alt="Click the link for the central route" src="images/ocp-compliance-arch.png" width="60%"></div>
+<div style="align:center"><img alt="Click the link for the central route" src="images/ocp-compliance-arch.png" width="70%"></div>
 ---
 
 Advanced Cluster Security provides not only deep insights into the security of your clusters, it helps you visualize and prioritize your security concerns.
 
 ---
-<div style="align:center"><img alt="Click the link for the central route" src="images/acs-arch.png" width="60%"></div>
+<div style="align:center"><img alt="Click the link for the central route" src="images/acs-arch.png" width="70%"></div>
 ---
 
 Using these three products your security posture across many clusters can be well understood and managed.
 
+## Goal
+
+This page is associated with an IBM Developer Conference presentation which has a goal of showing some ways to use Advanced Cluster Security to improve your OpenShift cluster's governance.  The following security aspects will be demonstrated:
+
+1. Compliance and Compliance Remediation
+2. Vulnerability scanning
+3. Network Policies
+4. Runtime threat detection
+5. Governance of newly added clusters
 
 ## Prerequisites
 
@@ -112,6 +121,7 @@ oc create ns compliance
 
 In the ACM web console, view the policies in the `Governance` tab and wait for the policies to become `Compliant` or `NonCompliant`. Switch to the ACS web console and run a Compliance scan by selecting the `Compliance` tab and then select the `SCAN ENVIRONMENT` button. Note the compliance percentages for OCP4-MODERATE and OCP4-MODERATE-NODE.
 
+
 ### Check the Cluster Compliance
 
 In the ACS web console, Open the Compliance scan results for the OCP4-MODERATE compliance results and select the `View Standard` button.  Sort the Controls so the 0% Compliance controles are listed first.
@@ -127,7 +137,7 @@ oc create ns remediation
 ./deploy.sh -u https://github.com/gparvin/grc-demo -b main -p OpenShift-Plus/remediation -a remediate -s medium -n remediation
 ```
 
-An additional remediation is the 
+An additional remediation is the etcd encryption policy can be enforced.  Enforcement should be applied using gitops.
 
 To see a compliance improvement, you must re-run the compliance scan for the Compliance Operator and then for ACS.
 
@@ -135,6 +145,21 @@ To see a compliance improvement, you must re-run the compliance scan for the Com
 2. Wait for the command `oc get compliancescans -n openshift-compliance` to show that the `PHASE` for the `ocp4-moderate` scan is `DONE`.
 3. In the ACS console, select `Compliance` and then click the `SCAN ENVIRONMENT` button.
 4. After the scan completes you should see a small improvement to the Compliance percentages for OCP4 moderate.
+
+
+### Vulnerability Scanning
+
+How do I know if the applications I am deploying are properly secured?  I deployed the pacman application and it seems to work ok.  Is that enough?
+Try out pacman and take a look at the `Vulnerability Management` tab in ACS.  What deployment has the highest risk?  Should I have deployed pacman?
+
+ACS includes a command line interface called `roxctl`.  This command can be used in your continuous integration flows to make sure your deployments are secure.  Run the following command:
+
+```
+roxctl image scan --image quay.io/jpacker/nodejs-pacman-app:latest -e central-stackrox.apps.parvin49.dev08.red-chesterfield.com:443
+```
+
+Now you have all the data you need to show that this image has many risks and that you should not have deployed it.  In addition to image scanning, use tools like [KubeLinter](https://github.com/stackrox/kube-linter) to check your 
+application files against many security best practices.
 
 
 ### Network Policies
@@ -171,12 +196,6 @@ spec:
 
 Copy the NetworkPolicy to the `pacman` subdirectory and commit and push your changes if you want the policy deployed with your application.  Otherwise you need to create a policy that deploys this resource to the same clusters where you deploy the pacman application.
 
-### Deploy a new cluster
-
-In the ACM web console you can now deploy a new cluster.  The remediations that have been applied will also be applied to the new cluster if you also apply the `environment=dev` label to the new managed cluster.  To validate this, create the new managed cluster by selecting `Infrastructure` and then `Clusters`.  Create a new cluster and include the new label when requested.
-
-When the new cluster has finished installing, you can check the compliance of the new cluster in ACS.  The remediations that were applied earlier have been automatically applied to the new cluster.
-
 
 ### Runtime Detections
 
@@ -193,6 +212,12 @@ oc get po -n pacman
 ```
 
 The `apt list` command will likely work, but you will also see the pod immediately restarts.
+
+### Deploy a new cluster
+
+In the ACM web console you can now deploy a new cluster.  The remediations that have been applied will also be applied to the new cluster if you also apply the `environment=dev` label to the new managed cluster.  To validate this, create the new managed cluster by selecting `Infrastructure` and then `Clusters`.  Create a new cluster and include the new label when requested.
+
+When the new cluster has finished installing, you can check the compliance of the new cluster in ACS.  The remediations that were applied earlier have been automatically applied to the new cluster.
 
 
 ## Conclusions
