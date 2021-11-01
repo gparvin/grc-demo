@@ -1,10 +1,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  creationTimestamp: "2021-10-21T20:08:31Z"
   name: open-cluster-management:subscription-admin
-  resourceVersion: "721754"
-  uid: 5425e027-873b-41eb-978c-6749b3698c9e
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole

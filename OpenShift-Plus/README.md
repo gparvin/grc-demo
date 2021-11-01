@@ -42,7 +42,8 @@ ACM 2.4 is already installed on an OpenShift 4.9 cluster.  All of the resources 
 
 - All commands that are executed must in in the context of the ACM hub cluster.
 - An ACM Credential was pre-created to allow the new managed cluster to be created without having to create a new credential.
-- Login to the OpenShift Container Platform web console for the ACM hub cluster
+- Login to the OpenShift Container Platform web console for the ACM hub cluster and to the ACM web console
+- Apply the `subscription-admin.yaml` so the user is allowed to create subscriptions
 
 ## Procedure
 
@@ -55,6 +56,11 @@ oc create ns operators
 cd deploy
 ./deploy.sh -u https://github.com/gparvin/grc-demo -b main -p OpenShift-Plus/operators -a plus -s medium -n operators
 ```
+
+### Advanced Cluster Security setup
+
+**Note**: After deploying the initial policies that create several operators, you must wait for the operators to complete their installation and startup.  These
+steps assume a few minutes have passed to allow the operators to install.
 
 Login to the Advanced Cluster Security Central Server to create an API token and use the token to deploy the init bundle secrets.
 
@@ -77,6 +83,20 @@ cd ../acs-bundle
 ./deploy-bundle.sh -i bundle.yaml | oc apply -f -
 ```
 
+### Create the Pacman application
+
+The Pacman application is in the OpenShift-Plus/pacman subfolder.  Use the following steps to create this Application in ACM.
+
+1. In the ACM web console, select `Applications` then click the `Create application` button and select the `Subscription` type.
+2. Specify the Name: `pacman`
+3. Specify the Namespace: `pacman`
+4. Click the `Git` repository type
+5. Use `https://github.com/gparvin/grc-demo` for the URL.  If you forked the repository, use your own URL.
+6. Specify the Branch: `main`
+7. Specify the Path: `OpenShift-Plus/pacman`
+8. For the deployment labels, specify the label `environment` and value `dev`
+9. Click `Save`
+
 ### Deploy policies to determine compliance
 
 Install the Policies for compliance.  Included Policies are:
@@ -91,20 +111,6 @@ oc create ns compliance
 ```
 
 In the ACM web console, view the policies in the `Governance` tab and wait for the policies to become `Compliant` or `NonCompliant`. Switch to the ACS web console and run a Compliance scan by selecting the `Compliance` tab and then select the `SCAN ENVIRONMENT` button. Note the compliance percentages for OCP4-MODERATE and OCP4-MODERATE-NODE.
-
-### Create the Pacman application
-
-The Pacman application is in the OpenShift-Plus/pacman subfolder.  Use the following steps to create this Application in ACM.
-
-1. In the ACM web console, select `Applications` then click the `Create application` button and select the `Subscription` type.
-2. Specify the Name: `pacman`
-3. Specify the Namespace: `pacman`
-4. Click the `Git` repository type
-5. Use `https://github.com/gparvin/grc-demo` for the URL.  If you forked the repository, use your own URL.
-6. Specify the Branch: `main`
-7. Specify the Path: `OpenShift-Plus/pacman`
-8. For the deployment labels, specify the label `environment` and value `dev`
-9. Click `Save`
 
 ### Check the Cluster Compliance
 
