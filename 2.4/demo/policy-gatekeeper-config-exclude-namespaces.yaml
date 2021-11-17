@@ -109,6 +109,7 @@ spec:
                         - openshift-vsphere-infra
                         - policy-governance
                         - stackrox
+                        - tower
                       processes:
                         - '*'
 ---
