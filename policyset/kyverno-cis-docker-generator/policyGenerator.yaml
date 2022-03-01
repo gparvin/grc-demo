@@ -1,0 +1,57 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: policy-openshift-kyverno-cis
+placementBindingDefaults:
+  name: binding-policy-openshift-kyverno-cis
+policyDefaults:
+  categories:
+    - CM Configuration Management
+  controls: 
+    - CM-2 Baseline Configuration
+  namespace: policies
+  policySets:
+    - openshift-kyverno-cis
+  remediationAction: enforce
+  severity: medium
+  standards:
+    - CIS Docker for OpenShift
+policies:
+- name: policy-disallow-host-path
+  manifests:
+    - path: disallow-host-path-5-5.yaml
+- name: policy-disallow-host-ports
+  manifests:
+    - path: disallow-host-ports-5.7.yaml
+- name: policy-disallow-cri-sock-mount
+  categories:
+    - AU Audit and Accountability
+  controls:
+    - AU-3 Content of Audit Records
+  manifests:
+    - path: disallow_cri_sock_mount-5-31.yaml
+- name: policy-imagepullpolicy-always
+  categories:
+    - SC System and Communications Protection
+  controls:
+    - SC-12 Cryptographic Key Establishment and Management
+  manifests:
+    - path: imagepullpolicy-always-5-27.yaml
+- name: policy-require-run-as-nonroot
+  manifests:
+    - path: require-run-as-nonroot-5-23.yaml
+- name: policy-require-drop-all
+  manifests:
+    - path: require_drop_all-5-3.yaml
+- name: policy-require-pod-requests-limits
+  manifests:
+    - path: require_pod_requests_limits-5-10.yaml
+- name: policy-require-probes
+  manifests:
+    - path: require_probes-5-14.yaml
+- name: policy-require-ro-rootfs
+  manifests:
+    - path: require_ro_rootfs-5-12.yaml
+policySets:
+  - description: Applies the OpenShift best practices for CIS Docker using Kyverno as the Policy Enforcement Point.
+    name: openshift-kyverno-cis
