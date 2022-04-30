@@ -1,0 +1,110 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  annotations:
+    policy.open-cluster-management.io/categories: AC Access Control
+    policy.open-cluster-management.io/controls: AC-3 Access Enforcement
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+  name: policy-rbac-adminiterpolicies
+spec:
+  disabled: true
+  policy-templates:
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: policy-rbac-adminiterpolicies
+      spec:
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: user.openshift.io/v1
+            kind: Group
+            metadata:
+              name: SreAdminGrp
+            users: null
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: user.openshift.io/v1
+            kind: Group
+            metadata:
+              name: TeamA-SreAdminGrp
+            users: null
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: user.openshift.io/v1
+            kind: Group
+            metadata:
+              name: TeamB-SreAdminGrp
+            users: null
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: v1
+            kind: Namespace
+            metadata:
+              labels:
+                purpose: namespace-for-TeamA-policies
+              name: global-policies
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: v1
+            kind: Namespace
+            metadata:
+              labels:
+                purpose: namespace-for-TeamA-policies
+              name: team-a-policies
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: v1
+            kind: Namespace
+            metadata:
+              labels:
+                purpose: namespace-for-TeamB-policies
+              name: team-b-policies
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: rbac.authorization.k8s.io/v1
+            kind: ClusterRoleBinding
+            metadata:
+              name: SreAdmin-Binding
+            roleRef:
+              apiGroup: rbac.authorization.k8s.io
+              kind: ClusterRole
+              name: cluster-admin
+            subjects:
+            - apiGroup: rbac.authorization.k8s.io
+              kind: Group
+              name: SreAdminGrp
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: rbac.authorization.k8s.io/v1
+            kind: RoleBinding
+            metadata:
+              name: TeamA-SreAdmin-Binding
+              namespace: team-a-policies
+            roleRef:
+              apiGroup: rbac.authorization.k8s.io
+              kind: ClusterRole
+              name: admin
+            subjects:
+            - apiGroup: rbac.authorization.k8s.io
+              kind: Group
+              name: TeamA-SreAdminGrp
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: rbac.authorization.k8s.io/v1
+            kind: RoleBinding
+            metadata:
+              name: TeamB-SreAdmin-Binding
+              namespace: team-b-policies
+            roleRef:
+              apiGroup: rbac.authorization.k8s.io
+              kind: ClusterRole
+              name: admin
+            subjects:
+            - apiGroup: rbac.authorization.k8s.io
+              kind: Group
+              name: TeamB-SreAdminGrp
+        remediationAction: inform
+        severity: high
+  remediationAction: inform
