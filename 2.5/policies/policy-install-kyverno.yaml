@@ -16,6 +16,9 @@ spec:
         metadata:
           name: policy-kyverno-namespace
         spec:
+          evaluationInterval:
+            compliant: 2h
+            noncompliant: 60s
           remediationAction: inform
           severity: low
           namespaceSelector:

@@ -18,6 +18,9 @@ spec:
         metadata:
           name: ansible-automation-platform
         spec:
+          evaluationInterval:
+            compliant: 12h
+            noncompliant: 30s
           remediationAction: enforce
           severity: high
           object-templates:
