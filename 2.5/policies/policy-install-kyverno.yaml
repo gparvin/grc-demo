@@ -129,7 +129,7 @@ spec:
                 spec:
                   clusterSelector:
                     matchLabels:
-                      environment: dev                      
+                      name: local-cluster                      
             - complianceType: musthave
               objectDefinition:
                 apiVersion: apps.open-cluster-management.io/v1
