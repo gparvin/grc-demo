@@ -17,6 +17,14 @@ policyDefaults:
   standards:
     - NIST SP 800-53
 policies:
+- name: policy-check-certs
+  categories:
+    - SC System and Communications Protection
+  controls: 
+    - SC-8 Transmission Confidentiality and Integrity
+  manifests:
+    - path: input-certs/
+  remediationAction: "inform"
 - name: policy-check-backups
   disabled: false
   manifests:
