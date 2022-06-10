@@ -31,12 +31,21 @@ spec:
                 spec:
                   match:
                     - excludedNamespaces:
+                        - ansible-automation-platform
+                        - credentials
+                        - default
+                        - default-broker
+                        - kyverno
+                        - kyverno-channel
+                        - local-cluster
                         - hive
                         - kube-node-lease
                         - kube-public
                         - kube-storage-version-migrator-operator
                         - kube-system
+                        - multicluster-engine
                         - open-cluster-management
+                        - open-cluster-management-backup
                         - open-cluster-management-hub
                         - open-cluster-management-agent
                         - open-cluster-management-agent-addon
@@ -65,6 +74,7 @@ spec:
                         - openshift-dns-operator
                         - openshift-etcd
                         - openshift-etcd-operator
+                        - openshift-file-integrity
                         - openshift-gatekeeper-operator
                         - openshift-gatekeeper-system
                         - openshift-image-registry
@@ -102,6 +112,9 @@ spec:
                         - openshift-service-ca-operator
                         - openshift-user-workload-monitoring
                         - openshift-vsphere-infra
+                        - policies
+                        - rhacs-operator
+                        - stackrox
                       processes:
                         - '*'
 ---
