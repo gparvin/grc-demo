@@ -7,6 +7,9 @@ data:
   cluster1-namespace: 'app-sandbox-webapp'
   cluster1-memory-request: '128Mi' 
   cluster1-memory-limit: "256Mi"
+  mc-grc-apps1-memory-limit: "512Mi"
+  mc-grc-apps1-memory-request: '256Mi'
+  mc-grc-apps1-namespace: 'app-security'
   local-cluster-namespace: 'app-sandbox-local'
   local-cluster-memory-request: '128Mi' 
   local-cluster-memory-limit: "256Mi"

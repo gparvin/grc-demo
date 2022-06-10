@@ -55,3 +55,7 @@ policies:
 policySets:
   - description: Applies the OpenShift best practices for CIS Docker using Kyverno as the Policy Enforcement Point.
     name: openshift-kyverno-cis
+    placement:
+      name: placement-openshift-kyverno-cis
+      clusterSelectors:
+        environment: dev
