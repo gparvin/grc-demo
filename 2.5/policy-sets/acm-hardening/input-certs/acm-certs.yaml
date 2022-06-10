@@ -5,6 +5,7 @@ metadata:
 spec:
   namespaceSelector:
     include: ["multicluster-enginre","open-cluster-man*"]
+    exclude: ["open-cluster-management-agent*"]
   remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
   severity: low
   minimumDuration: 300h
