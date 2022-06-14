@@ -20,6 +20,9 @@ spec:
       metadata:
         name: gatekeeper-operator-product-sub
       spec:
+        evaluationInterval:
+          compliant: 6h
+          noncompliant: 600s
         remediationAction: inform
         severity: high
         object-templates:

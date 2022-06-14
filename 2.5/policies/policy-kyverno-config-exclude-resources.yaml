@@ -16,6 +16,9 @@ spec:
         metadata:
           name: policy-kyverno-config-exclude-resources
         spec:
+          evaluationInterval:
+            compliant: never
+            noncompliant: 600s
           remediationAction: inform # will be overridden by remediationAction in parent policy
           severity: low
           object-templates:

@@ -18,6 +18,9 @@ spec:
         metadata:
           name: policy-gatekeeper-config-exclude-namespaces
         spec:
+          evaluationInterval:
+            compliant: never
+            noncompliant: 600s
           remediationAction: enforce # will be overridden by remediationAction in parent policy
           severity: low
           object-templates:
