@@ -162,7 +162,7 @@ spec:
     collector:
       collection: KernelModule
       imageFlavor: Regular
-    taintToleration: TolerateTaints
+    taintToleration: AvoidTaints
 ---
 apiVersion: v1
 data:
