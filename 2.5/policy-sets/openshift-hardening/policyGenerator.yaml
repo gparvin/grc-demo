@@ -44,19 +44,19 @@ policies:
 #    - SC-12 Cryptographic Key Establishment and Management
 #  manifests:
 #    - path: input-certs/
-- name: policy-compliance-operator-install
-  manifests:
-    - path: input-compliance/policy-compliance-operator-install.yaml
-  remediationAction: "enforce"
-- name: policy-compliance-operator-moderate-scan
-  manifests:
-    - path: input-compliance/policy-compliance-operator-moderate-scan.yaml
-  remediationAction: "enforce"
-- name: policy-compliance-operator-moderate-scan-results
-  complianceType: "mustnothave"
-  manifests:
-    - path: input-compliance/policy-compliance-operator-scan-results.yaml
-  remediationAction: "inform"
+#- name: policy-compliance-operator-install
+#  manifests:
+#    - path: input-compliance/policy-compliance-operator-install.yaml
+#  remediationAction: "enforce"
+#- name: policy-compliance-operator-moderate-scan
+#  manifests:
+#    - path: input-compliance/policy-compliance-operator-moderate-scan.yaml
+#  remediationAction: "enforce"
+#- name: policy-compliance-operator-moderate-scan-results
+#  complianceType: "mustnothave"
+#  manifests:
+#    - path: input-compliance/policy-compliance-operator-scan-results.yaml
+#  remediationAction: "inform"
 #- name: policy-etcd-backup
 #  manifests:
 #    - path: input-etcd/policy-etcd-backup.yaml
