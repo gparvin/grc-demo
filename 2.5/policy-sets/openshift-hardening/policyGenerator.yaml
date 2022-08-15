@@ -17,9 +17,9 @@ policyDefaults:
   standards:
     - NIST SP 800-53
 policies:
-#- name: policy-limitclusteradmin # iam policy not supported by the generator
-#  manifests:
-#    - path: input-admin/policy-limitclusteradmin.yaml
+- name: policy-limitclusteradmin # iam policy not supported by the generator
+  manifests:
+    - path: input-admin/policy-limitclusteradmin.yaml
 - name: policy-remove-kubeadmin
   categories:
     - SC System and Communications Protection
@@ -37,26 +37,26 @@ policies:
   manifests:
     - path: input-audit/policy-config-audit.yaml
   remediationAction: "enforce"
-#- name: policy-cert-ocp4
-#  categories:
-#    - SC System and Communications Protection
-#  controls:
-#    - SC-12 Cryptographic Key Establishment and Management
-#  manifests:
-#    - path: input-certs/
+- name: policy-cert-ocp4
+  categories:
+    - SC System and Communications Protection
+  controls:
+    - SC-12 Cryptographic Key Establishment and Management
+  manifests:
+    - path: input-certs/
 #- name: policy-compliance-operator-install
 #  manifests:
 #    - path: input-compliance/policy-compliance-operator-install.yaml
 #  remediationAction: "enforce"
-#- name: policy-compliance-operator-moderate-scan
-#  manifests:
-#    - path: input-compliance/policy-compliance-operator-moderate-scan.yaml
-#  remediationAction: "enforce"
-#- name: policy-compliance-operator-moderate-scan-results
-#  complianceType: "mustnothave"
-#  manifests:
-#    - path: input-compliance/policy-compliance-operator-scan-results.yaml
-#  remediationAction: "inform"
+- name: policy-compliance-operator-moderate-scan
+  manifests:
+    - path: input-compliance/policy-compliance-operator-moderate-tailored.yaml
+  remediationAction: "enforce"
+- name: policy-compliance-operator-moderate-scan-results
+  complianceType: "mustnothave"
+  manifests:
+    - path: input-compliance/policy-compliance-operator-scan-results.yaml
+  remediationAction: "inform"
 #- name: policy-etcd-backup
 #  manifests:
 #    - path: input-etcd/policy-etcd-backup.yaml
