@@ -2,6 +2,7 @@ apiVersion: compliance.openshift.io/v1alpha1
 kind: TailoredProfile
 metadata:
   name: nist-moderate-modified
+  namespace: openshift-compliance
 spec:
   extends: ocp4-moderate
   description: NIST moderate profile for OCP 4
@@ -11,6 +12,7 @@ apiVersion: compliance.openshift.io/v1alpha1
 kind: TailoredProfile
 metadata:
   name: nist-moderate-modified-rhcos
+  namespace: openshift-compliance
 spec:
   extends: rhcos4-moderate
   description: NIST moderate profile for RH COS 4

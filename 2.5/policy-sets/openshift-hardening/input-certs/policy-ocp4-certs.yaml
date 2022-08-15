@@ -7,7 +7,6 @@ spec:
     include:
     - openshift-service-ca-operator
     - openshift-service-ca
-    - openshift-operator-lifecycle-manager
     - openshift-apiserver
     - openshift-apiserver-operator
     - openshift-authentication
@@ -40,6 +39,7 @@ spec:
   minimumDuration: 400h
   severity: low
 ---
+apiVersion: policy.open-cluster-management.io/v1
 kind: CertificatePolicy
 metadata:
   name: openshift-cert-policy-ingress
