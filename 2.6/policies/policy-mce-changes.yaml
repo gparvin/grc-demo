@@ -1,0 +1,64 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-mce-changes
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-mce-changes
+        spec:
+          evaluationInterval:
+            compliant: never
+            noncompliant: 600s
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: low
+          object-templates:
+            - complianceType: mustonlyhave
+              objectDefinition:
+                apiVersion: multicluster.openshift.io/v1
+                kind: MultiClusterEngine
+                metadata:
+                  name: multiclusterengine
+                  namespace: multicluster-engine
+                spec:
+                  overrides:
+                    components:
+                    - enabled: true
+                      name: managedserviceaccount-preview
+                    - enabled: false
+                      name: hypershift-preview
+                  targetNamespace: multicluster-engine
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: binding-policy-mce-changes
+placementRef:
+  name: placement-policy-mce-changes
+  kind: PlacementRule
+  apiGroup: apps.open-cluster-management.io
+subjects:
+  - name: policy-mce-changes
+    kind: Policy
+    apiGroup: policy.open-cluster-management.io
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: placement-policy-mce-changes
+spec:
+  clusterConditions:
+    - status: "True"
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - {key: name, operator: In, values: ["local-cluster"]}

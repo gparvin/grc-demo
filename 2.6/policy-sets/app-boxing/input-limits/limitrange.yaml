@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: mem-limit-range
+  namespace: '{{hub fromConfigMap "" "app-box-config"  (printf "%s-namespace" .ManagedClusterName) hub}}'
+spec:
+  limits:
+  - default:
+      memory: '{{hub fromConfigMap "" "app-box-config"  (printf "%s-memory-limit" .ManagedClusterName) hub}}'
+    defaultRequest:
+      memory: '{{hub fromConfigMap "" "app-box-config"  (printf "%s-memory-request" .ManagedClusterName) hub}}'
+    type: Container
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: compute-resources
+  namespace: '{{hub fromConfigMap "" "app-box-config"  (printf "%s-namespace" .ManagedClusterName) hub}}'
+spec:
+  hard:
+    requests.cpu: "1"
+    requests.memory: 1Gi
+    limits.cpu: "2"
+    limits.memory: 2Gi
+    requests.nvidia.com/gpu: 4

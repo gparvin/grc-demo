@@ -1,0 +1,95 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: policy-gatekeeper-containers
+placementBindingDefaults:
+  name: binding-policy-gatekeeper-containers
+policyDefaults:
+  categories:
+    - CM Configuration Management
+  controls: 
+    - CM-2 Baseline Configuration
+  namespace: policies
+  policySets:
+    - gatekeeper-containers
+  remediationAction: enforce
+  severity: medium
+  standards:
+    - NIST SP 800-53
+policies:
+- name: policy-container-env-maxmemory-notset
+  disabled: false
+  manifests:
+    - path: container-env-maxmemory-notset.yaml
+#- name: policy-container-image-latest
+#  disabled: false
+#  manifests:
+#    - path: container-image-latest.yaml
+#- name: policy-container-image-unknownregistries
+#  disabled: false
+#  manifests:
+#    - path: container-image-unknownregistries.yaml
+- name: policy-container-java-xmx-set
+  disabled: false
+  manifests:
+    - path: container-java-xmx-set.yaml
+#- name: policy-container-labelkey-inconsistent
+#  disabled: false
+#  manifests:
+#    - path: container-labelkey-inconsistent.yaml
+#- name: policy-container-liveness-readinessprobe-equal
+#  disabled: false
+#  manifests:
+#    - path: container-liveness-readinessprobe-equal.yaml
+#- name: policy-container-livenessprobe-notset
+#  disabled: false
+#  manifests:
+#    - path: container-livenessprobe-notset.yaml
+#- name: policy-container-readinessprobe-notset
+#  disabled: false
+#  manifests:
+#    - path: container-readinessprobe-notset.yaml
+- name: policy-container-resources-limits-cpu-set
+  disabled: false
+  manifests:
+    - path: container-resources-limits-cpu-set.yaml
+- name: policy-container-resources-limits-memory-greater
+  disabled: false
+  manifests:
+    - path: container-resources-limits-memory-greater-than.yaml
+- name: policy-container-resources-limits-memory-notset
+  disabled: false
+  manifests:
+    - path: container-resources-limits-memory-notset.yaml
+- name: policy-container-resources-memoryunit-incorrect
+  disabled: false
+  manifests:
+    - path: container-resources-memoryunit-incorrect.yaml
+- name: policy-container-resources-requests-cpuunit-incorrect
+  disabled: false
+  manifests:
+    - path: container-resources-requests-cpuunit-incorrect.yaml
+- name: policy-container-resources-requests-memory-greater
+  disabled: false
+  manifests:
+    - path: container-resources-requests-memory-greater-than.yaml
+#- name: policy-container-secret-mounted-envs
+#  disabled: false
+#  manifests:
+#    - path: container-secret-mounted-envs.yaml
+#- name: policy-container-volumemount-inconsistent-path
+#  disabled: false
+#  manifests:
+#    - path: container-volumemount-inconsistent-path.yaml
+#- name: policy-container-volumemount-missing
+#  disabled: false
+#  manifests:
+#    - path: container-volumemount-missing.yaml
+policySets:
+  - name: gatekeeper-containers
+    description: Apply standard best practices for hardening your containers
+      on OpenShift managed clusters using the Gatekeeper enforcement point.
+    placement:
+      name: placement-gatekeeper-containers
+      clusterSelectors:
+        name: grc-mc-demo
