@@ -17,8 +17,8 @@ spec:
           name: policy-kyverno-config-exclude-resources
         spec:
           evaluationInterval:
-            compliant: never
-            noncompliant: 600s
+            compliant: 120s
+            noncompliant: 60s
           remediationAction: inform # will be overridden by remediationAction in parent policy
           severity: low
           object-templates:
@@ -43,7 +43,7 @@ spec:
                   namespace: kyverno
                 data:       # specify all filters you need to exclude
                   generateSuccessEvents: "false"
-                  resourceFilters: '[Event,*,*][*,kube-system,*][*,kube-public,*][*,kube-node-lease,*][Node,*,*][APIService,*,*][TokenReview,*,*][SubjectAccessReview,*,*][SelfSubjectAccessReview,*,*][*,kyverno,*][*,openshift-*,*][*,open-cluster-*,*][*.stackrox,*][Binding,*,*][ReplicaSet,*,*][ReportChangeRequest,*,*][ClusterReportChangeRequest,*,*]'
+                  resourceFilters: '[Event,*,*][*,kube-system,*][*,kube-public,*][*,kube-node-lease,*][Node,*,*][APIService,*,*][TokenReview,*,*][SubjectAccessReview,*,*][SelfSubjectAccessReview,*,*][*,hashivault,*][*,vault,*][*,kyverno,*][*,openshift-*,*][*,open-cluster-*,*][*.stackrox,*][Binding,*,*][ReplicaSet,*,*][ReportChangeRequest,*,*][ClusterReportChangeRequest,*,*]'
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
