@@ -9,9 +9,9 @@ kind: Policy
 metadata:
   name: policy-ansible-automation-operator
   annotations:
-    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/standards: NIST 800-53
     policy.open-cluster-management.io/categories: CM Configuration Management
-    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+    policy.open-cluster-management.io/controls: CM-2 Baseline
 spec:
   disabled: false
   policy-templates:
@@ -21,9 +21,6 @@ spec:
         metadata:
           name: ansible-automation-platform
         spec:
-          evaluationInterval:
-            compliant: 6h
-            noncompliant: 600s
           remediationAction: enforce
           severity: high
           object-templates:
@@ -48,7 +45,7 @@ spec:
                   name: ansible-automation-operator
                   namespace: ansible-automation-platform
                 spec:
-                  channel: stable-2.2-cluster-scoped
+                  channel: stable-2.1-cluster-scoped
                   installPlanApproval: Automatic
                   name: ansible-automation-platform-operator
                   source: redhat-operators
@@ -157,8 +154,8 @@ spec:
       type: ManagedClusterConditionAvailable
   clusterSelector:
     matchExpressions:
-      - key: name
+      - key: environment
         operator: In
         values:
-          - local-cluster
+          - dev
 
