@@ -23,7 +23,6 @@ spec:
         machine.openshift.io/cluster-api-machine-type: worker
         machine.openshift.io/cluster-api-machineset: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}-storage-{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.platformStatus.aws.region }}c'
     spec:
-      lifecycleHooks: {}
       metadata:
         labels:
           cluster.ocs.openshift.io/openshift-storage: ""
