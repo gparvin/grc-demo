@@ -1,0 +1,11 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: IamPolicy # limit clusteradminrole and report violation
+metadata:
+  name: policy-limitclusteradmin-example
+spec:
+  severity: medium
+  namespaceSelector:
+    include: ["*"]
+    exclude: ["kube-*", "openshift-*"]
+  remediationAction: inform # the policy-template spec.remediationAction is overridden by the preceding parameter value for spec.remediationAction.
+  maxClusterRoleBindingUsers: 5

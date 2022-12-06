@@ -1,0 +1,39 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: app-box-config
+  namespace: policies
+data:
+  cluster1-namespace: 'app-sandbox-webapp'
+  cluster1-memory-request: '128Mi' 
+  cluster1-memory-limit: "256Mi"
+  mc-grc-apps1-memory-limit: "512Mi"
+  mc-grc-apps1-memory-request: '256Mi'
+  mc-grc-apps1-namespace: 'app-security'
+  local-cluster-namespace: 'app-sandbox-local'
+  local-cluster-memory-request: '128Mi' 
+  local-cluster-memory-limit: "256Mi"
+  aws-arm-namespace: 'app-sandbox-leg'
+  aws-arm-memory-request: '128Mi' 
+  aws-arm-memory-limit: "256Mi"
+  build-team-02-namespace: 'app-sandbox-build'
+  build-team-02-memory-request: '128Mi' 
+  build-team-02-memory-limit: "256Mi"
+  credit-team-06-namespace: 'app-sandbox-credit'
+  credit-team-06-memory-request: '128Mi' 
+  credit-team-06-memory-limit: "256Mi"
+  elpaso-namespace: 'app-sandbox-texas'
+  elpaso-memory-request: '128Mi' 
+  elpaso-memory-limit: "256Mi"
+  machine-learning-team-03-namespace: 'app-sandbox-learning'
+  machine-learning-team-03-memory-request: '128Mi' 
+  machine-learning-team-03-memory-limit: "256Mi"
+  pipeline-team-04-namespace: 'app-sandbox-pipeline'
+  pipeline-team-04-memory-request: '128Mi' 
+  pipeline-team-04-memory-limit: "256Mi"
+  sanjose-namespace: 'app-sandbox-sanjose'
+  sanjose-memory-request: '128Mi' 
+  sanjose-memory-limit: "256Mi"
+  compliance-mc-namespace: 'app-sandbox-webapp'
+  compliance-mc-reequest: '128Mi'
+  compliance-mc-limit: "256Mi"

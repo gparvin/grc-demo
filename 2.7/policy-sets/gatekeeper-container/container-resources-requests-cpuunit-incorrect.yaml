@@ -1,0 +1,254 @@
+---
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: containercpuincorrect
+spec:
+  crd:
+    spec:
+      names:
+        kind: ContainerCpuIncorrect
+  targets:
+    - libs:
+        - |
+          package lib.konstraint.core
+
+          default is_gatekeeper = false
+
+          is_gatekeeper {
+              has_field(input, "review")
+              has_field(input.review, "object")
+          }
+
+          resource = input.review.object {
+              is_gatekeeper
+          }
+
+          resource = input {
+              not is_gatekeeper
+          }
+
+          format(msg) = {"msg": msg} {
+              true
+          }
+
+          format_with_id(msg, id) = msg_fmt {
+              msg_fmt := {
+                  "msg": sprintf("%s: %s", [id, msg]),
+                  "details": {"policyID": id}
+              }
+          }
+
+          apiVersion = resource.apiVersion
+          name = resource.metadata.name
+          kind = resource.kind
+          labels = resource.metadata.labels
+          annotations = resource.metadata.annotations
+          gv := split(apiVersion, "/")
+          group = gv[0] {
+              contains(apiVersion, "/")
+          }
+          group = "core" {
+              not contains(apiVersion, "/")
+          }
+          version := gv[count(gv) - 1]
+
+          #parameters = input.parameters {
+          #    is_gatekeeper
+          #}
+
+          #parameters = data.parameters {
+          #   not is_gatekeeper
+          #}
+
+          has_field(obj, field) {
+              not object.get(obj, field, "N_DEFINED") == "N_DEFINED"
+          }
+
+          missing_field(obj, field) = true {
+              obj[field] == ""
+          }
+
+          missing_field(obj, field) = true {
+              not has_field(obj, field)
+          }
+        - |-
+          package lib.konstraint.pods
+
+          import data.lib.konstraint.core
+
+          default pod = false
+
+          pod = core.resource.spec.template {
+              pod_templates := ["daemonset","deployment","job","replicaset","replicationcontroller","statefulset"]
+              lower(core.kind) == pod_templates[_]
+          }
+
+          pod = core.resource {
+              lower(core.kind) == "pod"
+          }
+
+          pod = core.resource.spec.jobTemplate.spec.template {
+              lower(core.kind) == "cronjob"
+          }
+
+          containers[container] {
+              keys = {"containers", "initContainers"}
+              all_containers = [c | keys[k]; c = pod.spec[k][_]]
+              container = all_containers[_]
+          }
+
+          volumes[volume] {
+              volume = pod.spec.volumes[_]
+          }
+        - |-
+          package lib.kubernetes
+
+          import data.lib.konstraint.core as konstraint_core
+
+          is_deployment {
+              lower(konstraint_core.apiVersion) == "apps/v1"
+              lower(konstraint_core.kind) == "deployment"
+          }
+
+          is_service {
+              lower(konstraint_core.apiVersion) == "v1"
+              lower(konstraint_core.kind) == "service"
+          }
+
+          is_rolebinding {
+              lower(konstraint_core.apiVersion) == "rbac.authorization.k8s.io/v1"
+              lower(konstraint_core.kind) == "rolebinding"
+          }
+        - |-
+          package lib.openshift
+
+          import data.lib.konstraint.core as konstraint_core
+          import data.lib.konstraint.pods as konstraint_pods
+          import data.lib.kubernetes
+
+          pod = konstraint_pods.pod {
+              konstraint_pods.pod
+          }
+
+          pod = konstraint_core.resource.spec.template {
+              is_deploymentconfig
+          }
+
+          containers[container] {
+              keys = {"containers", "initContainers"}
+              all_containers = [c | keys[k]; c = pod.spec[k][_]]
+              container = all_containers[_]
+          }
+
+          is_deploymentconfig {
+              lower(konstraint_core.apiVersion) == "apps.openshift.io/v1"
+              lower(konstraint_core.kind) == "deploymentconfig"
+          }
+
+          is_route {
+              lower(konstraint_core.apiVersion) == "route.openshift.io/v1"
+              lower(konstraint_core.kind) == "route"
+          }
+
+          is_pod_or_networking {
+              pod
+          }
+
+          is_pod_or_networking {
+              kubernetes.is_service
+          }
+
+          is_pod_or_networking {
+              is_route
+          }
+
+          is_policy_active(policyId) {
+              not konstraint_core.is_gatekeeper
+          }
+
+          is_policy_active(policyId) {
+              konstraint_core.is_gatekeeper
+
+              disabledpolicies := namespace_disabled_policies_label
+              not label_contains(disabledpolicies, policyId)
+          }
+
+          label_contains(disabledpolicies, policyId) {
+              policyId == disabledpolicies[_]
+          }
+
+          namespace_disabled_policies_label = disabledpolicies {
+              namepace := data.inventory.cluster["v1"].Namespace[konstraint_core.resource.metadata.namespace]
+              label := namepace.metadata.labels["redhat-cop.github.com/gatekeeper-disabled-policies"]
+              disabledpolicies := split(label, ",")
+          }
+
+          namespace_disabled_policies_label = [""] {
+              namepace := data.inventory.cluster["v1"].Namespace[konstraint_core.resource.metadata.namespace]
+              not namepace.metadata.labels["redhat-cop.github.com/gatekeeper-disabled-policies"]
+          }
+      rego: |-
+        # @title RHCOP-OCP_BESTPRACT-00014: Container resources requests cpu has incorrect unit
+        #
+        # Beginners can easily confuse the allowed cpu unit, this policy enforces what is valid.
+        # See: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-units-in-kubernetes
+        #
+        # @kinds apps.openshift.io/DeploymentConfig apps/DaemonSet apps/Deployment apps/Job apps/ReplicaSet core/ReplicationController apps/StatefulSet core/Pod batch/CronJob
+        package ocp.bestpractices.container_resources_requests_cpuunit_incorrect
+        
+        import data.lib.konstraint.core as konstraint_core
+        import data.lib.openshift
+        
+        violation[msg] {
+          openshift.is_policy_active("RHCOP-OCP_BESTPRACT-00014")
+          container := openshift.containers[_]
+        
+          not is_resource_requests_cpu_contains_dollar(container)
+          not is_resource_requests_cpu_units_valid(container)
+        
+          msg := konstraint_core.format_with_id(sprintf("%s/%s container '%s' cpu resources for requests (%s) has an incorrect unit. See: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-units-in-kubernetes", [konstraint_core.kind, konstraint_core.name, container.name, container.resources.requests.cpu]), "RHCOP-OCP_BESTPRACT-00014")
+        }
+        
+        is_resource_requests_cpu_contains_dollar(container) {
+          not is_resource_requests_cpu_a_core(container)
+          startswith(container.resources.requests.cpu, "$")
+        }
+        
+        #TODO: is input correct?
+        is_resource_requests_cpu_a_core(container)  {
+          is_number(input.resources.requests.cpu)
+          to_number(input.resources.requests.cpu)
+        }
+        
+        is_resource_requests_cpu_units_valid(container)  {
+          is_resource_requests_cpu_a_core(container)
+        }
+        
+        is_resource_requests_cpu_units_valid(container)  {
+          not is_resource_requests_cpu_a_core(container)
+        
+          # 'cpu' can be a quoted number, which is why we concat an empty string[] to match whole cpu cores
+          cpuRequestsUnit := array.concat(regex.find_n("[A-Za-z]+", container.resources.requests.cpu, 1), [""])[0]
+        
+          units := ["m", ""]
+          cpuRequestsUnit == units[_]
+        }
+      target: admission.k8s.gatekeeper.sh
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: ContainerCpuIncorrect
+metadata:
+  name: containercpuincorrect
+spec:
+  enforcementAction: dryrun
+  match:
+    kinds:
+      - apiGroups:
+          - apps.openshift.io
+          - apps
+        kinds:
+          - DeploymentConfig
+          - DaemonSet
+          - Deployment
+          - StatefulSet

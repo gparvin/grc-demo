@@ -1,0 +1,67 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: policyset-app-boxing
+placementBindingDefaults:
+  name: binding-policyset-app-boxing
+policyDefaults:
+  categories:
+    - CM Configuration Management
+  controls: 
+    - CM-2 Baseline Configuration
+  namespace: policies
+  policySets:
+    - app-boxing
+  remediationAction: enforce
+  severity: medium
+  standards:
+    - NIST SP 800-53
+policies:
+- name: policy-app-config
+  disabled: false
+  manifests:
+    - path: input-config/
+  policySets:
+    - app-config
+- name: policy-config-namespace
+  categories:
+    - CA Security Assessment and Authorization
+  controls: 
+    - CA-2 Security Assessments
+  disabled: false
+  manifests:
+    - path: input-namespace/
+  namespaceSelector:
+    include:
+      - "app-*"
+  remediationAction: "enforce"
+- name: policy-networking
+  categories:
+    - CA Security Assessment and Authorization
+  controls: 
+    - CA-2 Security Assessments
+  disabled: false
+  manifests:
+    - path: input-network/
+  namespaceSelector:
+    include:
+      - "app-*"
+  remediationAction: "enforce"
+- name: policy-limits
+  categories:
+    - SI System and Information Integrity
+  controls: 
+    - SI-5 Security Alerts Advisories and Directives
+  disabled: false
+  manifests:
+    - path: input-limits/
+  namespaceSelector:
+    include:
+      - "app-*"
+policySets:
+  - name: app-config
+    description: Configuration for deploying application resource limitations.
+    placement:
+      placementRulePath: input/hub-placement.yaml
+  - name: app-boxing
+    description: Policies that limit application resource usage.

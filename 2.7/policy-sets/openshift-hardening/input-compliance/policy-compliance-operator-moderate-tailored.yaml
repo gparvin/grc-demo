@@ -1,0 +1,47 @@
+apiVersion: compliance.openshift.io/v1alpha1
+kind: TailoredProfile
+metadata:
+  name: nist-moderate-modified
+  namespace: openshift-compliance
+spec:
+  extends: ocp4-moderate
+  description: NIST moderate profile for OCP 4
+  title: My modified NIST moderate profile
+---
+apiVersion: compliance.openshift.io/v1alpha1
+kind: TailoredProfile
+metadata:
+  name: nist-moderate-modified-rhcos
+  namespace: openshift-compliance
+spec:
+  extends: rhcos4-moderate
+  description: NIST moderate profile for RH COS 4
+  title: My modified NIST moderate RHCOS profile
+  disableRules:
+  - name: rhcos4-account-disable-post-pw-expiration
+    rationale: No need to check this as it comes from the IdP
+---
+apiVersion: compliance.openshift.io/v1alpha1
+kind: ScanSettingBinding
+metadata:
+  name: moderate
+  namespace: openshift-compliance
+profiles:
+- apiGroup: compliance.openshift.io/v1alpha1
+  kind: TailoredProfile
+  name: nist-moderate-modified
+- apiGroup: compliance.openshift.io/v1alpha1
+  kind: TailoredProfile
+  name: nist-moderate-modified-rhcos
+settingsRef:
+  apiGroup: compliance.openshift.io/v1alpha1
+  kind: ScanSetting
+  name: default
+---
+apiVersion: compliance.openshift.io/v1alpha1
+kind: ComplianceSuite
+metadata:
+  name: moderate
+  namespace: openshift-compliance
+status:
+  phase: DONE

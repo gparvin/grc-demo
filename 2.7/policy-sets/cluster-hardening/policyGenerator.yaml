@@ -1,0 +1,35 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: policy-cluster-hardening
+placementBindingDefaults:
+  name: binding-policy-cluster-hardening
+policyDefaults:
+  categories:
+    - CM Configuration Management
+  controls: 
+    - CM-2 Baseline Configuration
+  namespace: policies
+  policySets:
+    - cluster-hardening
+  remediationAction: enforce
+  severity: medium
+  standards:
+    - NIST SP 800-53
+policies:
+- name: policy-namespace
+  categories:
+    - SI System and Information Integrity
+  complianceType: "mustnothave"
+  controls: 
+    - SI-5 Security Alerts Advisories and Directives
+  disabled: false
+  manifests:
+    - path: input-namespace/
+  remediationAction: "inform"
+policySets:
+  - name: cluster-hardening
+    description: Apply standard best practices for hardening your Kubernetes
+      clusters.
+    placement:
+      placementPath: input/placement.yaml
