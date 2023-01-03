@@ -10,7 +10,7 @@ display different features in GRC.
 
 ```
 cd deploy
-echo y | ./deploy.sh -u https://github.com/gparvin/grc-demo.git -p 2.7/policy-sets/openshift-plus-setup -n policies -a acm
+echo y | ./deploy.sh -u https://github.com/gparvin/grc-demo.git -p 2.7/policy-sets/openshift-plus-setup -n open-cluster-management-global-set -a acm
 echo y | ./deploy.sh -u https://github.com/gparvin/grc-demo.git -p 2.7/policy-sets/acm-hardening -n policies -a acm
 echo y | ./deploy.sh -u https://github.com/gparvin/grc-demo.git -p 2.7/policy-sets/openshift-hardening -n policies -a ocp
 echo y | ./deploy.sh -u https://github.com/gparvin/grc-demo.git -p 2.7/policy-sets/openshift-plus -n policies -a acs

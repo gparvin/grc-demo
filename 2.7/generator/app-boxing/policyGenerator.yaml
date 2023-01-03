@@ -10,6 +10,7 @@ policyDefaults:
   controls: 
     - CM-2 Baseline Configuration
   namespace: policies
+  orderPolicies: true
   policySets:
     - app-boxing
   remediationAction: enforce
