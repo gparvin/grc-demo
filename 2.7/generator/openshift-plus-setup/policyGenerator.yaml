@@ -25,7 +25,7 @@ policies:
     - path: subscription-admin.yaml
 - name: policy-opp-prereq-machines
   manifests:
-    - path: machineset-1c.yaml
+    - path: machineset-2c.yaml
 - name: policy-opp-prereq-binding
   manifests:
     - path: managedclustersetbinding.yaml
