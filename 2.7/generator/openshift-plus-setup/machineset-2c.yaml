@@ -1,10 +1,6 @@
 apiVersion: machine.openshift.io/v1beta1
 kind: MachineSet
 metadata:
-  annotations:
-    machine.openshift.io/GPU: "0"
-    machine.openshift.io/memoryMb: "16384"
-    machine.openshift.io/vCPU: "4"
   labels:
     machine.openshift.io/cluster-api-cluster: '{{ (lookup "config.openshift.io/v1" "Infrastructure" "" "cluster").status.infrastructureName }}'
   name: openshift-storage-machines
