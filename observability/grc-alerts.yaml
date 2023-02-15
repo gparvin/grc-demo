@@ -1,0 +1,129 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: ocm-grc-policy-alerting
+  namespace: openshift-monitoring
+spec:
+    groups:
+    - name: ACMPolicyFramework
+      rules:
+      - alert: PolicyFrameworkAddonUnavailable
+        annotations:
+          description: The configuration policy availability.
+          summary: Configuration Policy pod has become unavailable.
+        expr: |
+          sum(increase(config_policy_evaluation_total[180s])) > 0
+        labels:
+          severity: warning
+      - alert: ConfigPolicyEvaluationsFailing
+        annotations:
+          description: The configuration policy controller is no longer able
+            to successfully evaluate policies.
+          summary: Configuration Policy pod has high evaluation errors.
+        expr: |
+          sum(increase(policy_system_errors_total{service="config-policy-controller-metrics"}[15m])) / sum(increase(config_policy_evaluation_total[15m])) > 0.20
+        labels:
+          severity: warning
+      - alert: ConfigPolicyPodRestarting
+        annotations:
+          description: The configuration policy controller is restarting.
+          summary: Configuration Policy pod is restarting.
+        expr: |
+          sum(increase(kube_pod_container_status_restarts_total{container="config-policy-controller"}[15m])) > 2
+        labels:
+          severity: warning
+      - alert: PolicyStatusSyncUnavailable
+        annotations:
+          description: The Policy Status Sync controller is reconciling status events
+            but at least half of those events are completing in an error state.
+          summary: Policy Status Sync is reconciling but many reconciles are errors.
+        expr: |
+          sum(increase(controller_runtime_reconcile_total{controller="policy-status-sync"}[15m])) >= 5 and sum(increase(controller_runtime_reconcile_errors_total{controller="policy-status-sync"}[15m])) / sum(increase(controller_runtime_reconcile_total{controller="policy-status-sync"}[15m])) > 0.50
+        labels:
+          severity: warning
+      - alert: PolicyStatusSyncStalled
+        annotations:
+          description: The Policy Status Sync controller is not reconciling status events.
+          summary: Policy Status Sync is not reconciling.  It appears to be stalled.
+        expr: |
+          sum(delta(controller_runtime_reconcile_total{controller="policy-status-sync"}[15m])) == 0 and avg_over_time(workqueue_depth{name="policy-status-sync"}[15m]) > 0
+        labels:
+          severity: warning
+      - alert: PolicyStatusSyncRestarting
+        annotations:
+          description: The policy status sync controller is restarting.
+          summary: Policy status sync pod is restarting.
+        expr: |
+          sum(increase(kube_pod_container_status_restarts_total{container="governance-policy-framework-addon"}[15m])) > 2
+        labels:
+          severity: warning
+      - alert: PolicyTemplateSyncUnavailable
+        annotations:
+          description: The Policy Template Sync controller is reconciling status events
+            but at least half of those events are completing in an error state.
+          summary: Policy Template Sync is reconciling but many reconciles are errors.
+        expr: |
+          sum(increase(controller_runtime_reconcile_total{controller="policy-template-sync"}[15m])) >= 5 and sum(increase(policy_system_errors_total{service="governance-policy-framework-metrics"}[15m])) / sum(increase(controller_runtime_reconcile_total{controller="policy-template-sync"}[15m])) > 0.50
+        labels:
+          severity: warning
+      - alert: PolicyTemplateSyncStalled
+        annotations:
+          description: The Policy Template Sync controller is stalled reconciling status events
+          summary: Policy Template Sync is stalled reconciling
+        expr: |
+          sum(delta(controller_runtime_reconcile_total{controller="policy-template-sync"}[15m])) == 0 and avg_over_time(workqueue_depth{name="policy-template-sync"}[15m]) > 0
+        labels:
+          severity: warning
+      - alert: PolicySpecSyncErrors
+        annotations:
+          description: The Policy Spec Sync controller is reconciling status events
+            but many reconciles are completing with errors
+          summary: Policy Spec Sync is reconciling but many complete with errors
+        expr: |
+          sum(increase(controller_runtime_reconcile_total{controller="policy-spec-sync"}[15m])) >= 5 and sum(increase(controller_runtime_reconcile_errors_total{controller="policy-spec-sync"}[15m])) / sum(increase(controller_runtime_reconcile_total{controller="policy-spec-sync"}[15m])) > 0.50
+        labels:
+          severity: warning
+      - alert: PolicySpecSyncStalled
+        annotations:
+          description: The Policy Spec Sync controller is stalled reconciling status events
+          summary: Policy Spec Sync is stalled reconciling
+        expr: |
+          sum(delta(controller_runtime_reconcile_total{controller="policy-spec-sync"}[15m])) == 0 and avg_over_time(workqueue_depth{name="policy-spec-sync"}[15m]) > 0
+        labels:
+          severity: warning
+      - alert: PolicyPropagatorStalled
+        annotations:
+          description: The Policy Propagator controller is reconciling status events
+            and encountered a high number of reconcile errors
+          summary: Policy Propagator is reconciling but many reconciles result in errors
+        expr: |
+          sum(increase(controller_runtime_reconcile_total{controller="policy-propagator"}[15m])) >= 5 and sum(increase(controller_runtime_reconcile_errors_total{controller="policy-propagator"}[15m])) / sum(increase(controller_runtime_reconcile_total{controller="policy-propagator"}[15m])) > 0.50
+        labels:
+          severity: warning
+      - alert: PolicySetControllerStalled
+        annotations:
+          description: The Policy Set controller is reconciling status events
+            and encountered a high number of reconcile errors
+          summary: Policy Set controller is reconciling but many reconciles result in errors
+        expr: |
+          sum(increase(controller_runtime_reconcile_total{controller="policy-set"}[15m])) >= 5 and sum(increase(controller_runtime_reconcile_errors_total{controller="policy-set"}[15m])) / sum(increase(controller_runtime_reconcile_total{controller="policy-set"}[15m])) > 0.50
+        labels:
+          severity: warning
+      - alert: PolicyEncryptionKeysStalled
+        annotations:
+          description: The Policy Encryption Keys controller is reconciling status events
+            and encountered a high number of reconcile errors
+          summary: Policy Encryption Keys is reconciling but many reconciles result in errors
+        expr: |
+          sum(increase(controller_runtime_reconcile_total{controller="policy-encryption-keys"}[15m])) >= 5 and sum(increase(controller_runtime_reconcile_errors_total{controller="policy-encryption-keys"}[15m])) / sum(increase(controller_runtime_reconcile_total{controller="policy-encryption-keys"}[15m])) > 0.50
+        labels:
+          severity: warning
+      - alert: PolicyPropagatorStalled
+        annotations:
+          description: The Policy Root Status controller is reconciling status events
+            and encountered a high number of reconcile errors
+          summary: Policy Root Status is reconciling but many reconciles result in errors
+        expr: |
+          sum(increase(controller_runtime_reconcile_total{controller="root-policy-status"}[15m])) >= 5 and sum(increase(controller_runtime_reconcile_errors_total{controller="root-policy-status"}[15m])) / sum(increase(controller_runtime_reconcile_total{controller="root-policy-status"}[15m])) > 0.50
+        labels:
+          severity: warning

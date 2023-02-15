@@ -1,0 +1,15 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: observability-metrics-custom-allowlist
+  namespace: open-cluster-management-observability
+data:
+  metrics_list.yaml: |
+    names:
+      - config_policy_evaluation_total
+      - controller_runtime_reconcile_total
+      - controller_runtime_reconcile_errors_total
+      - kube_pod_container_status_restarts_total
+      - policy_system_errors_total
+      - policy_user_errors_total
+      - workqueue_depth
