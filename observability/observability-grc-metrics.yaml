@@ -10,6 +10,7 @@ data:
       - controller_runtime_reconcile_total
       - controller_runtime_reconcile_errors_total
       - kube_pod_container_status_restarts_total
+      - policy_governance_info
       - policy_system_errors_total
       - policy_user_errors_total
       - workqueue_depth
