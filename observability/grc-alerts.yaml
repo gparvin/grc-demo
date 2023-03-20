@@ -23,13 +23,14 @@ spec:
         expr: |
           sum(increase(policy_system_errors_total{service="config-policy-controller-metrics"}[15m])) / sum(increase(config_policy_evaluation_total[15m])) > 0.20
         labels:
-          severity: warning
+          severity: critical
       - alert: ConfigPolicyPodRestarting
         annotations:
           description: The configuration policy controller is restarting.
           summary: Configuration Policy pod is restarting.
         expr: |
           sum(increase(kube_pod_container_status_restarts_total{container="config-policy-controller"}[15m])) > 2
+        for: 1h
         labels:
           severity: warning
       - alert: PolicyStatusSyncUnavailable
@@ -40,7 +41,7 @@ spec:
         expr: |
           sum(increase(controller_runtime_reconcile_total{controller="policy-status-sync"}[15m])) >= 5 and sum(increase(controller_runtime_reconcile_errors_total{controller="policy-status-sync"}[15m])) / sum(increase(controller_runtime_reconcile_total{controller="policy-status-sync"}[15m])) > 0.50
         labels:
-          severity: warning
+          severity: critical
       - alert: PolicyStatusSyncStalled
         annotations:
           description: The Policy Status Sync controller is not reconciling status events.
@@ -55,6 +56,7 @@ spec:
           summary: Policy status sync pod is restarting.
         expr: |
           sum(increase(kube_pod_container_status_restarts_total{container="governance-policy-framework-addon"}[15m])) > 2
+        for: 1h
         labels:
           severity: warning
       - alert: PolicyTemplateSyncUnavailable
@@ -65,7 +67,7 @@ spec:
         expr: |
           sum(increase(controller_runtime_reconcile_total{controller="policy-template-sync"}[15m])) >= 5 and sum(increase(policy_system_errors_total{service="governance-policy-framework-metrics"}[15m])) / sum(increase(controller_runtime_reconcile_total{controller="policy-template-sync"}[15m])) > 0.50
         labels:
-          severity: warning
+          severity: critical
       - alert: PolicyTemplateSyncStalled
         annotations:
           description: The Policy Template Sync controller is stalled reconciling status events
@@ -82,7 +84,7 @@ spec:
         expr: |
           sum(increase(controller_runtime_reconcile_total{controller="policy-spec-sync"}[15m])) >= 5 and sum(increase(controller_runtime_reconcile_errors_total{controller="policy-spec-sync"}[15m])) / sum(increase(controller_runtime_reconcile_total{controller="policy-spec-sync"}[15m])) > 0.50
         labels:
-          severity: warning
+          severity: critical
       - alert: PolicySpecSyncStalled
         annotations:
           description: The Policy Spec Sync controller is stalled reconciling status events
