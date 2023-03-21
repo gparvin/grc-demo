@@ -101,7 +101,7 @@ spec:
         expr: |
           sum(increase(controller_runtime_reconcile_total{controller="policy-propagator"}[15m])) >= 5 and sum(increase(controller_runtime_reconcile_errors_total{controller="policy-propagator"}[15m])) / sum(increase(controller_runtime_reconcile_total{controller="policy-propagator"}[15m])) > 0.50
         labels:
-          severity: warning
+          severity: critical
       - alert: PolicySetControllerStalled
         annotations:
           description: The Policy Set controller is reconciling status events
