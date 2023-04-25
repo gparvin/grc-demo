@@ -1,0 +1,32 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: policy-gatekeeper-fs
+placementBindingDefaults:
+  name: binding-policy-gatekeeper-fs
+policyDefaults:
+  categories:
+    - CM Configuration Management
+  controls: 
+    - CM-2 Baseline Configuration
+  evaluationInterval:
+    compliant: 300s
+    noncompliant: 120s
+  namespace: policies
+  policySets:
+    - gatekeeper-fs
+  remediationAction: enforce
+  severity: medium
+  standards:
+    - Gatekeeper
+policies:
+- name: policy-host-filesystem
+  manifests:
+    - path: hostfilesystem
+policySets:
+  - description: Applies the Gatekeeper policies for pod security filesystem best practices
+    name: gatekeeper-fs
+    placement:
+      name: placement-policy-gatekeeper-fs
+      clusterSelectors:
+        admission: gatekeeper
