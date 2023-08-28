@@ -203,7 +203,7 @@ spec:
         import data.lib.openshift
         
         violation[msg] {
-          openshift.is_policy_active("RHCOP-OCP_BESTPRACT-00013")
+          #openshift.is_policy_active("RHCOP-OCP_BESTPRACT-00013")
           container := openshift.containers[_]
         
           not startswith(container.resources.requests.memory, "$")

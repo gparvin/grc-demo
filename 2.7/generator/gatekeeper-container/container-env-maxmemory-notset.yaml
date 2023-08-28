@@ -72,7 +72,7 @@ spec:
           missing_field(obj, field) = true {
               not has_field(obj, field)
           }
-        - |-
+        - |
           package lib.konstraint.pods
 
           import data.lib.konstraint.core
@@ -101,7 +101,7 @@ spec:
           volumes[volume] {
               volume = pod.spec.volumes[_]
           }
-        - |-
+        - |
           package lib.kubernetes
 
           import data.lib.konstraint.core as konstraint_core
@@ -202,7 +202,7 @@ spec:
         import data.lib.openshift
         
         violation[msg] {
-          openshift.is_policy_active("RHCOP-OCP_BESTPRACT-00002")
+          #openshift.is_policy_active("RHCOP-OCP_BESTPRACT-00002")
           container := openshift.containers[_]
         
           konstraint_core.labels["redhat-cop.github.com/technology"] == "java"

@@ -188,6 +188,12 @@ spec:
               namepace := data.inventory.cluster["v1"].Namespace[konstraint_core.resource.metadata.namespace]
               not namepace.metadata.labels["redhat-cop.github.com/gatekeeper-disabled-policies"]
           }
+        - |-
+          package lib.memory
+
+          kb := 1024
+          mb := kb * 1024
+          gb := mb * 1024
       rego: |-
         # @title RHCOP-OCP_BESTPRACT-00011: Container resource limits memory not greater than
         #
@@ -203,9 +209,9 @@ spec:
         import data.lib.openshift
         
         violation[msg] {
-          openshift.is_policy_active("RHCOP-OCP_BESTPRACT-00011")
+          #openshift.is_policy_active("RHCOP-OCP_BESTPRACT-00011")
           #NOTE: upperBound is an arbitrary number and it should be changed to what your company believes is the correct policy
-          upperBound := 6 * memory.gb
+          upperBound := 1 * memory.mb
         
           container := openshift.containers[_]
         

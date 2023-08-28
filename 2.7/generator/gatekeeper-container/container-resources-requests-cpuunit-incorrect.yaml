@@ -201,7 +201,7 @@ spec:
         import data.lib.openshift
         
         violation[msg] {
-          openshift.is_policy_active("RHCOP-OCP_BESTPRACT-00014")
+          #openshift.is_policy_active("RHCOP-OCP_BESTPRACT-00014")
           container := openshift.containers[_]
         
           not is_resource_requests_cpu_contains_dollar(container)

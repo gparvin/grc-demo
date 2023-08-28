@@ -202,7 +202,7 @@ spec:
         import data.lib.openshift
         
         violation[msg] {
-          openshift.is_policy_active("RHCOP-OCP_BESTPRACT-00012")
+          #openshift.is_policy_active("RHCOP-OCP_BESTPRACT-00012")
           container := openshift.containers[_]
         
           # TODO: Maybe should use below factored out?

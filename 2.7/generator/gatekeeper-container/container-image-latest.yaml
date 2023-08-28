@@ -276,66 +276,67 @@ spec:
             has_field(c, "securityContext")
             has_field(c.securityContext, "allowPrivilegeEscalation")
           }
-        - |-
-          package lib.openshift
+        - |
+          package lib.konstraint.core
 
-          import data.lib.konstraint
+          default is_gatekeeper = false
 
-          is_deploymentconfig {
-            lower(konstraint.object.apiVersion) == "apps.openshift.io/v1"
-            lower(konstraint.object.kind) == "deploymentconfig"
+          is_gatekeeper {
+              has_field(input, "review")
+              has_field(input.review, "object")
           }
 
-          is_route {
-            lower(konstraint.object.apiVersion) == "route.openshift.io/v1"
-            lower(konstraint.object.kind) == "route"
+          resource = input.review.object {
+              is_gatekeeper
           }
 
-          is_workload_kind {
-            is_deploymentconfig
+          resource = input {
+              not is_gatekeeper
           }
 
-          is_workload_kind {
-            konstraint.is_statefulset
+          format(msg) = {"msg": msg} {
+              true
           }
 
-          is_workload_kind {
-            konstraint.is_daemonset
+          format_with_id(msg, id) = msg_fmt {
+              msg_fmt := {
+                  "msg": sprintf("%s: %s", [id, msg]),
+                  "details": {"policyID": id}
+              }
           }
 
-          is_workload_kind {
-            konstraint.is_deployment
+          apiVersion = resource.apiVersion
+          name = resource.metadata.name
+          kind = resource.kind
+          labels = resource.metadata.labels
+          annotations = resource.metadata.annotations
+          gv := split(apiVersion, "/")
+          group = gv[0] {
+              contains(apiVersion, "/")
+          }
+          group = "core" {
+              not contains(apiVersion, "/")
+          }
+          version := gv[count(gv) - 1]
+
+          #parameters = input.parameters {
+          #    is_gatekeeper
+          #}
+
+          #parameters = data.parameters {
+          #   not is_gatekeeper
+          #}
+
+          has_field(obj, field) {
+              not object.get(obj, field, "N_DEFINED") == "N_DEFINED"
           }
 
-          is_all_kind {
-            is_workload_kind
+          missing_field(obj, field) = true {
+              obj[field] == ""
           }
 
-          is_all_kind {
-            konstraint.is_service
-          }
-
-          is_all_kind {
-            is_route
-          }
-
-          pods[pod] {
-            is_deploymentconfig
-            pod = konstraint.object.spec.template
-          }
-
-          pods[pod] {
-            pod = konstraint.pods[_]
-          }
-
-          containers[container] {
-            pods[pod]
-            all_containers = konstraint.pod_containers(pod)
-            container = all_containers[_]
-          }
-
-          containers[container] {
-            container = konstraint.containers[_]
+          missing_field(obj, field) = true {
+              not has_field(obj, field)
           }
       rego: |-
         # @title RHCOP-OCP_BESTPRACT-00003: Container image is not set as latest
@@ -345,12 +346,11 @@ spec:
         # @kinds apps.openshift.io/DeploymentConfig apps/DaemonSet apps/Deployment apps/Job apps/ReplicaSet core/ReplicationController apps/StatefulSet core/Pod batch/CronJob
         package ocp.bestpractices.container_image_latest
         
+        import data.lib.konstraint as konstraint
         import data.lib.konstraint.core as konstraint_core
-        import data.lib.openshift
         
         violation[msg] {
-          openshift.is_policy_active("RHCOP-OCP_BESTPRACT-00003")
-          container := openshift.containers[_]
+          container := konstraint.containers[_]
         
           endswith(container.image, ":latest")
         
