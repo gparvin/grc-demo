@@ -1,0 +1,133 @@
+# This is a sample policy to demonstrate configuring  RBAC for application workloads
+# running on managedclusters.
+# NOTE* This policy is not rbac for administering applications or policies through Open Cluster Management hub,
+# it is rbac for directly  accessing and  working with applications on the managedclusters.
+#
+# This Policy considers the following example scenario
+#   Two different applications  X and Y are running on the Cluster.
+#   Application X is deployed in namespace project-x
+#   Application Y is deployed in namespace project-y
+#
+# This Policy Configures the following rbac model for the above scenario
+#   UsersGroups:  SreAdminGrp, AppX-AdminGrp, AppX-ViewGrp, AppY-AdminGrp, AppY-ViewGrp
+#   Rolebindings:
+#       SreAdminGrp has cluster-admin access to the Cluster
+#       AppX-AdminGrp has admin access to the namespace project-x where AppX is deployed
+#       AppY-ViewGrp has view access to the namespace project-x where AppX is deployed
+#       AppX-AdminGrp has admin access to the namespace project-y where AppY is deployed
+#       AppY-ViewGrp has view access to the namespace project-y where AppY is deployed
+
+kind: Group
+apiVersion: user.openshift.io/v1
+metadata:
+  name: SreAdminGrp
+users: null
+---
+kind: Group
+apiVersion: user.openshift.io/v1
+metadata:
+  name: AppX-AdminGrp
+users: null
+---
+kind: Group
+apiVersion: user.openshift.io/v1
+metadata:
+  name: AppX-ViewGrp
+users: null
+---
+kind: Group
+apiVersion: user.openshift.io/v1
+metadata:
+  name: AppY-AdminGrp
+users: null
+---
+kind: Group
+apiVersion: user.openshift.io/v1
+metadata:
+  name: AppY-ViewGrp
+users: null
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: project-x
+  labels:
+    purpose: namespace-for-sample-AppX-artifacts
+    acm-provisioned-namespace: yes
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: project-y
+  labels:
+    purpose: namespace-for-sample-AppY-artifacts
+    acm-provisioned-namespace: yes
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: SreAdmin-Binding
+subjects:
+  - kind: Group
+    apiGroup: rbac.authorization.k8s.io
+    name: SreAdminGrp
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: AppX-Admin-Binding
+  namespace: project-x
+subjects:
+  - kind: Group
+    apiGroup: rbac.authorization.k8s.io
+    name: AppX-AdminGrp
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: admin
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: AppX-View-Binding
+  namespace: project-x
+subjects:
+  - kind: Group
+    apiGroup: rbac.authorization.k8s.io
+    name: AppX-ViewGrp
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: AppY-Admin-Binding
+  namespace: project-y
+subjects:
+  - kind: Group
+    apiGroup: rbac.authorization.k8s.io
+    name: AppY-AdminGrp
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: admin
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: AppY-View-Binding
+  namespace: project-y
+subjects:
+  - kind: Group
+    apiGroup: rbac.authorization.k8s.io
+    name: AppY-ViewGrp
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view

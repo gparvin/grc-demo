@@ -1,0 +1,13 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: observability-metrics-custom-allowlist
+  namespace: open-cluster-management-observability
+data:
+  metrics_list.yaml: |
+    names: 
+      - kube_pod_resource_request
+      - cluster:namespace:pod_cpu:active:kube_pod_container_resource_requests
+      - cluster:namespace:pod_memory:active:kube_pod_container_resource_requests
+      - instance:node_cpu:rate:sum
+      - policy_governance_info

@@ -1,0 +1,32 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: ConfigurationPolicy
+metadata:
+  name: limitrange-policy
+spec:
+  severity: high
+  remediationAction: enforce
+  namespaceSelector:
+    matchLabels:
+      acm-provisioned-namespace: yes
+  object-templates-raw: |
+    {{- range (lookup "v1" "Namespace" "" "" "acm-provisioned-namespace=yes").items }}
+    - complianceType: mustonlyhave
+      objectDefinition:
+        apiVersion: v1
+        kind: LimitRange
+        metadata:
+          name: core-resource-limits
+          namespace: {{ .metadata.name }}
+        spec:
+          limits:
+          - default:
+              cpu: 200m
+              memory: 128Mi
+            defaultRequest:
+              cpu: 10m
+              memory: 64Mi
+            max:
+              cpu: "2"
+              memory: {{hub fromConfigMap "" "site-data" "max-memory" hub}}
+            type: Container
+    {{- end }}

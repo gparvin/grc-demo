@@ -1,0 +1,23 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: ConfigurationPolicy
+metadata:
+  name: resourcequotas-policy
+spec:
+  severity: high
+  remediationAction: enforce
+  namespaceSelector:
+    matchLabels:
+      acm-provisioned-namespace: yes
+  object-templates-raw: |
+    {{- range (lookup "v1" "Namespace" "" "" "acm-provisioned-namespace").items }}
+    - complianceType: mustonlyhave
+      objectDefinition:
+        apiVersion: v1
+        kind: ResourceQuota
+        metadata:
+          name: podlimit
+          namespace: {{ .metadata.name }}
+        spec: 
+          hard:
+            pods: "100"
+    {{- end }}

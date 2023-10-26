@@ -1,0 +1,103 @@
+# This is a sample policy to demonstrate configuring  RBAC in a multi-tenant environment
+# specifically for administering policies on the hub
+#
+# This Policy considers the following example scenario
+#   An Open Cluster Management Hub shared by two tenants named teamA and teamB
+#   ( for e.g these teams could dev or test teams or two differnt departments in an organization )
+#   Organization wide governance policies are in namespace global-policies
+#   TeamA specific policies are in namespace team-a-policies
+#   TeamB specific policies are in namespace team-b-policies
+#
+#
+# This Policy Configures the following rbac model on the hub for the above scenario
+#   UsersGroups:  SreAdminGrp, TeamA-SreAdminGrp, TeamB-SreAdminGrp
+#   Rolebindings:
+#       SreAdminGrp has cluster-admin access to the Cluster,
+#   administers global policies
+#       TeamA-SreAdminGrp has admin access to the namespace team-a-policies,
+#   administers TeamA's policies in namespace team-a-policies
+#       TeamB-SreAdminGrp has admin access to the namespace team-b-policies,
+#   administers TeamB's policies in namespace team-b-policies
+
+kind: Group
+apiVersion: user.openshift.io/v1
+metadata:
+  name: SreAdminGrp
+users: null
+---
+kind: Group
+apiVersion: user.openshift.io/v1
+metadata:
+  name: TeamA-SreAdminGrp
+users: null
+---
+kind: Group
+apiVersion: user.openshift.io/v1
+metadata:
+  name: TeamB-SreAdminGrp
+users: null
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: global-policies
+  labels:
+    purpose: namespace-for-TeamA-policies
+    acm-provisioned-namespace: yes
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: team-a-policies
+  labels:
+    purpose: namespace-for-TeamA-policies
+    acm-provisioned-namespace: yes
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: team-b-policies
+  labels:
+    purpose: namespace-for-TeamB-policies
+    acm-provisioned-namespace: yes
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: SreAdmin-Binding
+subjects:
+  - kind: Group
+    apiGroup: rbac.authorization.k8s.io
+    name: SreAdminGrp
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: TeamA-SreAdmin-Binding
+  namespace: team-a-policies
+subjects:
+  - kind: Group
+    apiGroup: rbac.authorization.k8s.io
+    name: TeamA-SreAdminGrp
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: admin
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: TeamB-SreAdmin-Binding
+  namespace: team-b-policies
+subjects:
+  - kind: Group
+    apiGroup: rbac.authorization.k8s.io
+    name: TeamB-SreAdminGrp
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: admin

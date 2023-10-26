@@ -1,0 +1,155 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: policy-cluster-hardening
+placementBindingDefaults:
+  name: binding-policy-cluster-hardening
+policyDefaults:
+  categories:
+    - CM Configuration Management
+  controls: 
+    - CM-2 Baseline Configuration
+  namespace: policies
+  policySets:
+    - cluster-hardening
+  remediationAction: inform
+  severity: medium
+  standards:
+    - NIST SP 800-53
+policies:
+
+# Hub policies
+- name: custom-observability-metrics
+  complianceType: "musthave"
+  manifests:
+    - path: hub/acm-grafana-observability-metrics-custom-allowlist.yaml
+  policySets:
+    - hub-cluster
+  remediationAction: enforce
+- name: cluster-addons-status
+  complianceType: "mustnothave"
+  manifests:
+    - path: hub/managedclusteraddon-available.yaml
+  namespaceSelector:
+    include:
+      - "{{hub .ManagedClusterName hub}}"
+  policySets:
+    - hub-cluster
+- name: site-config
+  complianceType: "musthave"
+  manifests:
+    - path: hub/site.yaml
+  policySets:
+    - hub-cluster
+  remediationAction: enforce
+- name: cluster-subscription-status
+  complianceType: "mustnothave"
+  manifests:
+    - path: hub/subscriptions-available.yaml
+  namespaceSelector:
+    include:
+      - "*"
+    exclude:
+      - "open*"
+  policySets:
+    - hub-cluster
+- name: rbac-hub-cluster-management
+  complianceType: "musthave"
+  manifests:
+    - path: rbac/configure-clusterlevel-rbac.yaml
+  policySets:
+    - hub-cluster
+  remediationAction: enforce
+- name: rbac-teams
+  complianceType: "musthave"
+  manifests:
+    - path: rbac/team-rbac.yaml
+  policySets:
+    - hub-cluster
+  remediationAction: enforce
+
+# Managed cluster policies
+
+# rbac policies
+- name: rbac-app-workloads
+  complianceType: "musthave"
+  manifests:
+    - path: rbac/configure-appworkloads-rbac-sample.yaml
+  remediationAction: enforce
+- name: remove-kube-admin
+  complianceType: "mustnothave"
+  manifests:
+    - path: rbac/remove-kubeadmin.yaml
+
+# general policies
+- name: cluster-operator-status
+  complianceType: "mustnothave"
+  manifests:
+    - path: general/checkclusteroperator.yaml
+- name: require-fips
+  manifests:
+    - path: general/check-fips.yaml
+- name: check-policy-reports
+  complianceType: "mustnothave"
+  manifests:
+    - path: general/check-policyreports.yaml
+  namespaceSelector:
+    include:
+      - "*"
+    exclude:
+      - "open*"
+- name: config-audit
+  manifests:
+    - path: general/config-audit.yaml
+- name: etcd-encryption
+  manifests:
+    - path: general/etcd-encryption.yaml
+- name: validate-infrastructure
+  manifests:
+    - path: general/infrastructure.yaml
+- name: limit-range-creation
+  manifests:
+    - path: general/limitrange-default.yaml
+  remediationAction: "enforce"
+- name: terminating-namespace
+  categories:
+    - SI System and Information Integrity
+  complianceType: "mustnothave"
+  controls: 
+    - SI-5 Security Alerts Advisories and Directives
+  manifests:
+    - path: general/namespaces.yaml
+- name: network-policies
+  manifests:
+    - path: general/network-policy-default.yaml
+  namespaceSelector:
+    matchLabels:
+      acm-provisioned-namespace: "yes"
+  remediationAction: enforce
+
+- name: terminating-config-policies
+  manifests:
+    - path: general/terminating-configpolicies.yaml
+
+- name: openshift-certificates
+  manifests:
+    - path: general/ocp4-certs.yaml
+
+- name: resource-quotas
+  manifests:
+    - path: general/resourcequota.yaml
+  remediationAction: enforce
+
+
+
+policySets:
+  - name: cluster-hardening
+    description: Apply standard best practices for hardening your Kubernetes
+      clusters.
+    placement:
+      placementPath: placement.yaml
+  - name: hub-cluster
+    description: Apply configuration and best practices to the ACM Hub
+      cluster.
+    placement:
+      placementPath: placement-hub.yaml

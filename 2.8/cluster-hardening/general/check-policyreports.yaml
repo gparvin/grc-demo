@@ -1,0 +1,16 @@
+# This policy looks for PolicyReport resources that contain failures.
+# These failures mean a compliance action was taken and there are resources that 
+# do not meet the compliance rules.
+#
+# Set remediationAction to "inform" to receive a list of PolicyReport 
+# resources that have a status of "fail".
+
+apiVersion: wgpolicyk8s.io/v1alpha2
+kind: PolicyReport
+results:
+  - result: fail
+---
+#apiVersion: wgpolicyk8s.io/v1alpha2
+#kind: ClusterPolicyReport
+#results:
+#  - result: fail

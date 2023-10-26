@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  local-cluster-epurl: https://test.com
+  max-memory: 12Gi
+kind: ConfigMap
+metadata:
+  name: site-data
+  namespace: policies
