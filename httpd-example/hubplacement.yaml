@@ -8,4 +8,4 @@ spec:
   - requiredClusterSelector:
       labelSelector:
         matchExpressions:
-          - {key: name, operator: In, values: ["invalid"]}
+          - {key: oppapps, operator: In, values: ["httpd-example"]}
