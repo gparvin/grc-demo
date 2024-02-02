@@ -1,0 +1,57 @@
+apiVersion: project.openshift.io/v1
+kind: Project
+metadata:
+ name: e2e-opp
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    description: Exposes and load balances the application pods
+    openshift.io/generated-by: OpenShiftNewApp
+  creationTimestamp: null
+  labels:
+    app: httpd-example
+    template: httpd-example
+  name: httpd-example
+  namespace: e2e-opp
+spec:
+  ports:
+  - name: web
+    port: 8080
+    targetPort: 8080
+  selector:
+    name: httpd-example
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftNewApp
+  creationTimestamp: null
+  labels:
+    app: httpd-example
+    template: httpd-example
+  name: httpd-example
+  namespace: e2e-opp
+spec:
+  to:
+    kind: Service
+    name: httpd-example
+    weight: null
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  annotations:
+    description: Keeps track of changes in the application image
+    openshift.io/generated-by: OpenShiftNewApp
+  creationTimestamp: null
+  labels:
+    app: httpd-example
+    template: httpd-example
+  name: httpd-example
+  namespace: e2e-opp
+spec:
+  lookupPolicy:
+    local: false

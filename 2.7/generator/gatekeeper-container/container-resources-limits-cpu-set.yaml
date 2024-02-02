@@ -214,7 +214,7 @@ spec:
 apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: ContainerResourceLimitsCpu
 metadata:
-  name: containerresourcelimitscpu
+  name: containerresourcelimitscpuc
 spec:
   enforcementAction: dryrun
   match:

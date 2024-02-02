@@ -9,6 +9,7 @@ policyDefaults:
     - CM Configuration Management
   controls: 
     - CM-2 Baseline Configuration
+  informGatekeeperPolicies: false
   namespace: policies
   policySets:
     - gatekeeper-containers
@@ -61,14 +62,10 @@ policies:
   disabled: false
   manifests:
     - path: container-resources-limits-memory-notset.yaml
-#- name: policy-container-resources-memoryunit-incorrect
-#  disabled: false
-#  manifests:
-#    - path: container-resources-memoryunit-incorrect.yaml
-#- name: policy-container-resources-requests-cpuunit-incorrect
-#  disabled: false
-#  manifests:
-#    - path: container-resources-requests-cpuunit-incorrect.yaml
+- name: policy-container-resources-requests-cpuunit-incorrect
+  disabled: false
+  manifests:
+    - path: container-resources-requests-cpuunit-incorrect.yaml
 #- name: policy-container-resources-requests-memory-greater
 #  disabled: false
 #  manifests:

@@ -239,7 +239,7 @@ spec:
 apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: ContainerCpuIncorrect
 metadata:
-  name: containercpuincorrect
+  name: containercpuincorrectc
 spec:
   enforcementAction: dryrun
   match:

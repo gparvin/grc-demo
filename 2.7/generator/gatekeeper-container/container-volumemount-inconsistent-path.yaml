@@ -424,7 +424,7 @@ spec:
 apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: ContainerVolumePath
 metadata:
-  name: containervolumepath
+  name: containervolumepathc
 spec:
   enforcementAction: dryrun
   match:

@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: httpd-example
+  name: httpd-example
+  namespace: e2e-opp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: httpd-example
+  template:
+    metadata:
+      labels:
+        app: httpd-example
+      name: httpd-example
+    spec:
+      containers:
+      - image: '{{hub fromConfigMap "" "quay-config" "host" hub}}/openshift_e2e-opp/httpd-example:latest'
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 30
+          timeoutSeconds: 3
+        name: httpd-example
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+        resources:
+          limits:
+            memory: 512Mi

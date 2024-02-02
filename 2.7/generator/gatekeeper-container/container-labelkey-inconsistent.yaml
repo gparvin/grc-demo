@@ -434,7 +434,7 @@ spec:
 apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: ContainerLabelKeyInconsistent
 metadata:
-  name: containerlabelkeyinconsistent
+  name: containerlabelkeyinconsistentc
 spec:
   enforcementAction: dryrun
   match:

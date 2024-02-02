@@ -216,7 +216,7 @@ spec:
 apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: ContainerResourceMemory
 metadata:
-  name: containerresourcememory
+  name: containerresourcememoryc
 spec:
   enforcementAction: dryrun
   match:
