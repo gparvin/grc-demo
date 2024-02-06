@@ -10,7 +10,6 @@ spec:
   selector:
     matchLabels:
       app: httpd-example
-      name: httpd-example
   template:
     metadata:
       labels:
