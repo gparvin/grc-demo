@@ -21,7 +21,7 @@ spec:
     port: 8080
     targetPort: 8080
   selector:
-    name: httpd-example
+    app: httpd-example
 ---
 apiVersion: route.openshift.io/v1
 kind: Route
