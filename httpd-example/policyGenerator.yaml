@@ -10,6 +10,7 @@ policyDefaults:
   controls: 
     - CM-2 Baseline Configuration
   namespace: policies
+  orderPolicies: true
   placement:
     placementPath: placement.yaml
   remediationAction: enforce
@@ -24,11 +25,9 @@ policies:
   manifests:
     - path: setup-status.yaml
   remediationAction: inform
-- name: policy-example-httpd
-  manifests:
-    - path: httpd-example.yaml
 - name: policy-build-example-httpd
   manifests:
     - path: build-httpd-example.yaml
-  placement:
-    placementPath: hubplacement.yaml
+- name: policy-example-httpd
+  manifests:
+    - path: httpd-example.yaml
