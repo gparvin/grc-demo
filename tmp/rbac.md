@@ -43,7 +43,7 @@ To help visualize how these components interact, consider the following conceptu
 graph TD
     subgraph RHACM Hub Cluster
         User_Team[User/Team] --> RBAC[Role-Based Access Control]
-        RBAC --> Namespace_Policies[Policy Authoring Namespace (e.g., "policies")]
+        RBAC --> Namespace_Policies[Policy Authoring Namespace]
 
         Namespace_Policies -- Defines --> Policy_Obj[Policy Object]
         Policy_Obj -- Binds to --> PlacementBinding[PlacementBinding]
