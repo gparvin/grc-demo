@@ -47,10 +47,10 @@ graph TD
 
         Namespace_Policies -- Defines --> Policy_Obj[Policy Object]
         Policy_Obj -- Binds to --> PlacementBinding[PlacementBinding]
-        PlacementBinding -- References --> Placement[Placement (defines target clusters criteria)]
+        PlacementBinding -- References --> Placement[Placement]
 
-        Namespace_Policies -- Creates --> ManagedClusterSetBinding[ManagedClusterSetBinding (in same namespace)]
-        ManagedClusterSetBinding -- Binds to --> ManagedClusterSet[ManagedClusterSet (grouping of Managed Clusters)]
+        Namespace_Policies -- Creates --> ManagedClusterSetBinding[ManagedClusterSetBinding]
+        ManagedClusterSetBinding -- Binds to --> ManagedClusterSet[ManagedClusterSet]
     end
 
     ManagedClusterSet -- Contains --> ManagedCluster1[Managed Cluster 1]
