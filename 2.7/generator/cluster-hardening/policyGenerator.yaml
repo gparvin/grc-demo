@@ -27,6 +27,16 @@ policies:
   manifests:
     - path: input-namespace/
   remediationAction: "inform"
+- name: policy-my-monitoring
+  complianceType: "musthave"
+  disabled: false
+  manifests:
+    - path: cm.yaml
+  remediationAction: "enforce"
+- name: policy-validate-infrastructure
+  manifests:
+    - path: sample/
+  remediationAction: "inform"
 policySets:
   - name: cluster-hardening
     description: Apply standard best practices for hardening your Kubernetes
