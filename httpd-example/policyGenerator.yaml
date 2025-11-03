@@ -19,6 +19,9 @@ policyDefaults:
     - NIST SP 800-53
 policies:
 - name: policy-example-setup
+  evaluationInterval:
+    compliant: 1m
+    noncompliant: 45s
   manifests:
     - path: setup-resources.yaml
 - name: policy-example-setup-status
