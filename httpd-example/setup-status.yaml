@@ -3,3 +3,7 @@ kind: ServiceAccount
 metadata:
   name: builder
   namespace: e2e-opp
+imagePullSecrets:
+- name: builder-quay-openshift
+secrets:
+- name: builder-quay-openshift
